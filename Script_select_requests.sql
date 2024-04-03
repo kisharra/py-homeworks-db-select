@@ -1,8 +1,7 @@
 --Название и продолжительность самого длительного трека.
-SELECT  track_title, duration
+SELECT track_title, duration 
 FROM tracks
-ORDER BY duration DESC 
-LIMIT 1;
+WHERE duration = (SELECT max(duration) FROM tracks);
 
 --Название треков, продолжительность которых не менее 3,5 минут.
 SELECT track_title
@@ -12,7 +11,7 @@ WHERE duration >= 210;
 --Названия сборников, вышедших в период с 2018 по 2020 год включительно.
 SELECT collection_name
 FROM collections
-WHERE release_date >= 2018 AND release_date <= 2020;
+WHERE release_date BETWEEN 2018 AND 2020;
 
 --Исполнители, чьё имя состоит из одного слова.
 SELECT band_name
@@ -44,10 +43,10 @@ GROUP BY album_name;
 
 --Все исполнители, которые не выпустили альбомы в 2020 году.
 SELECT bands.band_name
-FROM bands 
+FROM bands
 LEFT JOIN bands_discography ON bands.band_id = bands_discography.band_id
 LEFT JOIN discography ON bands_discography.album_id = discography.album_id
-WHERE discography.released_in IS NULL OR discography.released_in != 2020;
+WHERE discography.released_in NOT IN (SELECT released_in FROM discography WHERE released_in = 2020);
 
 --Названия сборников, в которых присутствует конкретный исполнитель 'The Browning'.
 SELECT DISTINCT collections.collection_name 
